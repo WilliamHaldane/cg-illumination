@@ -1,5 +1,5 @@
 #version 300 es
-precision mediump float;
+precision highp float;
 
 // Input
 in vec2 model_uv;
@@ -17,8 +17,10 @@ uniform vec3 ambient; // Ia
 // Output
 out vec4 FragColor;
 
-void main() {
+void main()
+{
     vec3 model_color = mat_color * texture(mat_texture, model_uv).rgb;
     // Color
-    FragColor = vec4(model_color, 1.0);
+    FragColor = vec4(model_color * ambient + diffuse_illum * model_color + specular_illum, 1.0);
+    // FragColor = vec4(model_uv, 0.0, 1.0);
 }

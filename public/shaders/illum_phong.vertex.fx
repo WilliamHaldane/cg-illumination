@@ -7,26 +7,26 @@ in vec3 normal;
 in vec2 uv;
 
 // Uniforms
-// projection 3D to 2D
 uniform mat4 world;
 uniform mat4 view;
 uniform mat4 projection;
-// material
 uniform vec2 texture_scale;
 
-// Output
+// Output to fragment shader
 out vec3 model_position;
 out vec3 model_normal;
 out vec2 model_uv;
 
 void main() {
-    // Pass vertex position onto the fragment shader
-    model_position = position;
-    // Pass vertex normal onto the fragment shader
-    model_normal = normal;
-    // Pass vertex texcoord onto the fragment shader
-    model_uv = uv;
+    // Transform vertex position and normal to world space
+    vec4 worldPos = world * vec4(position, 1.0);
+    vec3 worldNormal = normalize(mat3(transpose(inverse(world))) * normal);
+
+    // Pass transformed attributes to fragment shader
+    model_position = vec3(worldPos);
+    model_normal = worldNormal;
+    model_uv = uv * texture_scale;
 
     // Transform and project vertex from 3D world-space to 2D screen-space
-    gl_Position = projection * view * world * vec4(position, 1.0);;
+    gl_Position = projection * view * worldPos;
 }
